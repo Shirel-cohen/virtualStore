@@ -18,14 +18,20 @@ public class Client {
         this.lastName = lastName;
         this.userName = userName;
         this.password = password;
-       this.isMember = isMember;
-       this.isWorker=isWorker;
+        this.isMember = isMember;
+        this.isWorker=isWorker;
     }
     public Client(){
 
     }
 
 
+    public String toString(){
+        if(this.isMember){
+            return "Hello " + this.firstName + " " + this.lastName +"(vip)!";
+        }
+            return "Hello " + this.firstName + " " + this.lastName +"!";
+    }
 
     public String nameIsValid (){
         Scanner scanner = new Scanner(System.in);
@@ -48,6 +54,7 @@ public class Client {
 
         return nameToCheck;
     }
+
 
 
 

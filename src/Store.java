@@ -113,7 +113,16 @@ public class Store {
             }
             return strong;
         }
-
+        private int amountOfProduct(int numOfProduct)  {
+        boolean exist =false;
+        for (Product currentProduct:this.products)    {
+            if(currentProduct.getNumOfProduct()==numOfProduct) {
+                exist=true;
+                break;
+            }
+        }
+            // return (exist? );
+        }
         public Client login () {
             Scanner scanner = new Scanner(System.in);
             Scanner in = new Scanner(System.in);
@@ -130,11 +139,7 @@ public class Store {
                     found = currentUser;
                     switch (userChoice){
                         case 1:
-                            if (!currentUser.isMember()){
-                                System.out.println("Hello "+currentUser.getFirstName()+ " "+currentUser.getLastName()+"!");
-                            } else{
-                                System.out.println("Hello "+currentUser.getFirstName()+ " "+currentUser.getLastName()+"(VIP)!");
-                            }
+                            System.out.println(currentUser.toString());
                             System.out.println("The products in the store are in stock:");
                             for (Product currentProduct : this.products){
                                 if (currentProduct.isExist()){
@@ -144,11 +149,12 @@ public class Store {
                             do{
                                 System.out.println("Which product do you want, If you want to complete the purchase, enter -1 ");
                                 int userChoiceOfProduct=in.nextInt();
+
                                 int amountProduct;
                                 do{
                                     System.out.println("How much products do you want?");
                                      amountProduct=in.nextInt();
-                                } while (amountProduct>0 || amountProduct==-1);
+                                } while (amountProduct>0 && amountProduct<= || userChoiceOfProduct==-1);
 
                             } while (!products.contains(userChoice));
 

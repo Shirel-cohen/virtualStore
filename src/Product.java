@@ -49,4 +49,6 @@ public class Product {
     public void setNumOfProduct(int numOfProduct) {
         this.numOfProduct = numOfProduct;
     }
+
+
 }
