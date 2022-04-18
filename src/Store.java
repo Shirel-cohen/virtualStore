@@ -17,16 +17,15 @@ public class Store {
         this.products =new LinkedList<>();
     }
 
-
     public User createUserGeneral() {
         Scanner scanner = new Scanner(System.in);
-            User newUser = null;
-            System.out.println("Enter your firstName");
-            newUser.setFirstName(newUser.nameIsValid());
-            System.out.println("Enter your lastName");
-            newUser.setLastName(newUser.nameIsValid());
-            boolean usernameTaken = false;
-            String username = null;
+        User newUser = new User();
+        System.out.println("Enter your firstName");
+        newUser.setFirstName(newUser.nameIsValid());
+        System.out.println("Enter your lastName");
+        newUser.setLastName(newUser.nameIsValid());
+        boolean usernameTaken = false;
+        String username = null;
             do {
                 System.out.println("Enter username:");
                 username = scanner.nextLine();
@@ -46,11 +45,12 @@ public class Store {
 
         public void createUser () {
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Which type of user are you?");
+            Scanner in =new Scanner (System.in);
+            System.out.println("What type of user are you?");
             int type;
             do {
-                System.out.println("1 - for a Client \n 2 - for a Worker");
-                type = scanner.nextInt();
+                System.out.println("1 - for a Client \n2 - for a Worker");
+                type = in.nextInt();
             } while (type != 2 && type!=1);
             switch (type) {
                 case 1:
@@ -66,15 +66,33 @@ public class Store {
                     System.out.println("Client was added!");
                     break;
                 case 2:
-                    this.createUserGeneral();
+                    User newUser1 = this.createUserGeneral();
                     boolean setWorker = true;
                     int workerDegree;
-                    do {
+                    WorkerProperty workerProperty = WorkerProperty.None;
+                    do{
                         System.out.println("What is your degree?");
-                        System.out.println("1-regular worker \n 2-management \n 3-member of the management team");
-                        workerDegree = scanner.nextInt();
-                    } while (workerDegree != 2);
-                    break;
+                        System.out.println("1-regular worker \n2-management \n3-member of the management team");
+                        workerDegree = in.nextInt();
+                        if(setWorker){
+                            switch (workerDegree){
+                                case 1:
+                                    workerProperty=WorkerProperty.RegularWorker;
+                                    break;
+                                case 2:
+                                    workerProperty=WorkerProperty.Management;
+                                    break;
+                                case 3:
+                                    workerProperty=WorkerProperty.MemberOfTheManagementTeam;
+                                    break;
+                            }
+                        }
+                        //Worker newWorker = new Worker();
+
+                    } while (workerDegree != 1 && workerDegree != 2 && workerDegree != 3);
+
+
+
             }
 
         }

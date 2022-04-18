@@ -3,6 +3,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Store store = new Store();
+        System.out.println("hi wasim");
         int userChoice;
         do{
             System.out.println("Choose  your action");

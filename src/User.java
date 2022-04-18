@@ -18,6 +18,9 @@ public class User {
 
 
     }
+    public User() {
+
+    }
     public User (String userName){
 
         this.userName = userName;
@@ -26,20 +29,24 @@ public class User {
         Scanner scanner = new Scanner(System.in);
         String [] array = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
         boolean contains = false;
-        String nameToCheck=  null;
+        String nameToCheck =  null;
         do{
-             nameToCheck = scanner.nextLine();
+            contains = false;
+            System.out.println("> ");
+            nameToCheck = scanner.nextLine();
             for (int i=0; i< array.length;i++){
                 if (nameToCheck.contains(array[i])){
                     System.out.println("You need to enter name without numbers!");
                     contains=true;
+                    nameToCheck =  null;
                     break;
                 }
             }
-        } while (!contains);
+        } while (contains);
 
-       return nameToCheck;
+        return nameToCheck;
     }
+
 
 
     public String getFirstName() {
