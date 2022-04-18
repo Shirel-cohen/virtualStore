@@ -1,6 +1,4 @@
-import javafx.concurrent.Worker;
 
-import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Client {
@@ -10,16 +8,18 @@ public class Client {
     private String userName;
     private String password;
     private boolean isMember;
+    private boolean isWorker;
 //    private LinkedList<ShoppingCart> shoppingCartLinkedLis;
 //    private String date;
 
 
-    public Client(String firstName, String lastName, String userName, String password, boolean isMember) {
+    public Client(String firstName, String lastName, String userName, String password, boolean isMember, boolean isWorker) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
         this.password = password;
        this.isMember = isMember;
+       this.isWorker=isWorker;
     }
     public Client(){
 
@@ -90,6 +90,17 @@ public class Client {
     public void setMember(boolean member) {
         isMember = member;
     }
+
+    public boolean isWorker() {
+        return isWorker;
+    }
+
+    public void setWorker(boolean worker) {
+        isWorker = worker;
+    }
+
 }
+
+
 
 

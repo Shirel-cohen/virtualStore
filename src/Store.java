@@ -1,19 +1,18 @@
 
-import javafx.concurrent.Worker;
 
 import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Store {
-   // private LinkedList<User> users;
-    private LinkedList<Client> clients;
-    private LinkedList<Worker> workers;
+
+    private LinkedList<Client> users;
+  //  private LinkedList<Worker> workers;
     private LinkedList<Product> products;
 
     public Store() {
-    //    this.users = new LinkedList<>();
-        this.clients = new LinkedList<>();
-        this.workers =new LinkedList<>();
+
+        this.users = new LinkedList<>();
+       // this.workers =new LinkedList<>();
         this.products =new LinkedList<>();
     }
 
@@ -62,11 +61,14 @@ public class Store {
             switch (type) {
                 case 1:
                     Client newClient = createUserGeneral();
-                    this.clients.add(newClient);
+                    newClient.setWorker(false);
+                    this.users.add(newClient);
+
                     System.out.println("Client was added!");
                     break;
                 case 2:
-                    Client newClientWorker = createUserGeneral();
+                    Client newClientWorker =  createUserGeneral();
+                    newClientWorker.setWorker(true);
                    // boolean setWorker = true;
                     int workerDegree;
                     WorkerProperty workerProperty = WorkerProperty.None;
@@ -88,15 +90,15 @@ public class Store {
 
 
                     } while (workerDegree != 1 && workerDegree != 2 && workerDegree != 3);
-           // Worker newWorker = new Worker(newClientWorker.getFirstName(), newClientWorker.getLastName(), newClientWorker.getUserName(), newClientWorker.getPassword(), newClientWorker.isMember(), workerProperty);
+            Worker newWorker = new Worker(newClientWorker.getFirstName(), newClientWorker.getLastName(), newClientWorker.getUserName(), newClientWorker.getPassword(), newClientWorker.isMember(),newClientWorker.isWorker() ,workerProperty);
+            users.add(newWorker);
             }
-
         }
 
 
         private boolean doesUserNameExist (String usernameToCheck){
             boolean exits = false;
-            for (Client currentUser : this.clients) {
+            for (Client currentUser : this.users) {
                 if (currentUser.getUserName().equals(usernameToCheck)) {
                     exits = true;
                     break;
@@ -123,7 +125,7 @@ public class Store {
             String username = scanner.nextLine();
             System.out.println("Enter your password");
             String password = scanner.nextLine();
-            for (Client currentUser : this.clients) {
+            for (Client currentUser : this.users) {
                 if (currentUser.getUserName().equals(username) && currentUser.getPassword().equals(password)) {
                     found = currentUser;
                     switch (userChoice){
@@ -139,6 +141,16 @@ public class Store {
                                     System.out.println("Product number "+currentProduct.getNumOfProduct()+" : "+currentProduct.getProductName());
                                 }
                             }
+                            do{
+                                System.out.println("Which product do you want, If you want to complete the purchase, enter -1 ");
+                                int userChoiceOfProduct=in.nextInt();
+                                int amountProduct;
+                                do{
+                                    System.out.println("How much products do you want?");
+                                     amountProduct=in.nextInt();
+                                } while (amountProduct>0 || amountProduct==-1);
+
+                            } while (!products.contains(userChoice));
 
                             break;
                         case 2:
