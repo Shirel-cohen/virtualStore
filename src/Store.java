@@ -19,46 +19,46 @@ public class Store {
     public void createUser () {
         Scanner scanner = new Scanner(System.in);
         Scanner in =new Scanner (System.in);
-        System.out.println("What type of user are you?");
+        System.out.println("What type of user you are?");
         int type;
         do {
             System.out.println("1 - for a Client \n2 - for a Worker");
             type = in.nextInt();
-        } while (type != 2 && type!=1);
+        } while (type != Deff.CLIENT && type!=Deff.WORKER);
+
         switch (type) {
-            case 1:
+
+            case Deff.CLIENT:
                 Client newClient = createUserGeneral();
                 newClient.setWorker(false);
                 this.users.add(newClient);
-
-                System.out.println("Client was added!");
+                System.out.println("account has been created successfully");
                 break;
-            case 2:
+
+            case Deff.WORKER:
                 Client newClientWorker =  createUserGeneral();
                 newClientWorker.setWorker(true);
-                // boolean setWorker = true;
                 int workerDegree;
                 WorkerProperty workerProperty = WorkerProperty.None;
                 do{
                     System.out.println("What is your degree?");
                     System.out.println("1-regular worker \n2-management \n3-member of the management team");
                     workerDegree = in.nextInt();
-
                     switch (workerDegree){
-                        case 1:
+                        case Deff.REGULAR_WORKER:
                             workerProperty=WorkerProperty.RegularWorker;
                             break;
-                        case 2:
+                        case Deff.MANAGEMENT:
                             workerProperty=WorkerProperty.Management;
                             break;
-                        case 3:
+                        case Deff.MEMBER_OF_MANAGEMENT_TEAM:
                             workerProperty=WorkerProperty.MemberOfTheManagementTeam;
                             break;}
 
-
-                } while (workerDegree != 1 && workerDegree != 2 && workerDegree != 3);
-                Worker newWorker = new Worker(newClientWorker.getFirstName(), newClientWorker.getLastName(), newClientWorker.getUserName(), newClientWorker.getPassword(), newClientWorker.isMember(),newClientWorker.isWorker() ,workerProperty);
-                users.add(newWorker);
+                } while (workerDegree != Deff.REGULAR_WORKER && workerDegree != Deff.MANAGEMENT && workerDegree != Deff.MEMBER_OF_MANAGEMENT_TEAM);
+                Worker newWorker = new Worker(newClientWorker, workerProperty);
+//                Worker newWorker = new Worker(newClientWorker.getFirstName(), newClientWorker.getLastName(), newClientWorker.getUserName(), newClientWorker.getPassword(), newClientWorker.isMember(),newClientWorker.isWorker() ,workerProperty);
+                this.users.add(newWorker);
         }
     }
     public Client createUserGeneral() {
@@ -137,7 +137,7 @@ public class Store {
             switch (clientOrWorkerAccount) {
                 case Deff.CLIENT:
                     System.out.println(currentClientLogin.toString());
-                    buyingInProcess();
+                    buyingInProcess(currentClientLogin);
                     break;
 
 
@@ -168,28 +168,56 @@ public class Store {
 
     }
 
-    private void buyingInProcess() {
+    private void buyingInProcess(Client currentClientLogin) {
         Scanner scanner = new Scanner(System.in);
         boolean buyingInProcess = true;
         while (buyingInProcess) {
             System.out.println("Enter product number you would buy\nIf you want to complete the purchase enter -1");
             showProducts();
-            int productSelected = scanner.nextInt();
-            buyingInProcess = productSelected != -1;
+            int selectedProductNumber = scanner.nextInt();
+            buyingInProcess = selectedProductNumber != -1;
             if (buyingInProcess) {
-                int quantityUserNeeds = 0;
-                do {
-                    System.out.println("Select quantity: ");
-                    quantityUserNeeds = scanner.nextInt();
-                    if (quantityUserNeeds > amountOfProduct(quantityUserNeeds)) {
-                        System.out.println("The quantity you selected is not in stock!");
-                        System.out.println("Currently there are" + amountOfProduct(quantityUserNeeds) + " in stock of the product you have selected");
-                    }
-                } while (quantityUserNeeds < 0 && quantityUserNeeds > amountOfProduct(quantityUserNeeds));
+                Product userProduct = doseProductExist(selectedProductNumber);
+                if (userProduct!=null) {
+//                    should know what is the product index, to take the name and the price and add it to the client cart
+//                    if we have amount in the stock
+                    int quantityUserNeeds = 0;
+                    do {
+                        System.out.println("Select quantity: ");
+                        quantityUserNeeds = scanner.nextInt();
+                        if (quantityUserNeeds > amountOfProduct(quantityUserNeeds)) {
+                            System.out.println("The quantity you selected is not in stock!");
+                            System.out.println("Currently there are [" + amountOfProduct(quantityUserNeeds) + "] in stock of the product you have selected");
+                        }
+                        // here we know that we have enough amount so we will add the product and the price
+                        currentClientLogin.addProductToCart(userProduct.getProductName() , userProduct.getPrice());
+                    } while (quantityUserNeeds < 0 && quantityUserNeeds > amountOfProduct(quantityUserNeeds));
+                    // show the client his current shopping cart status, and the price he should pay until now.
+                    currentClientLogin.shoppingCartStatus();
 
+
+                    // after each purchase maybe**   the shopping cart should be reset for the next shopping
+
+
+
+                } else {
+                    // for shirel if you wanna try to imagine that we have products our store just put this else and his
+
+
+                    //invalid productNumber
+                    System.out.println("no such product");
+                }
             } else {
                 //purchase completed. nice to meet u
-                System.out.println("purchase Completed.....................bye bye . :)");
+                try {
+                    // This function collapses the program as long as there are no products
+                    currentClientLogin.finalCostOfPurchases();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                }
+                System.out.println("purchase Completed.....................bye bye :)");
 
             }
 
@@ -234,56 +262,56 @@ public class Store {
         return clientLogin;
     }
 
-
-    public Client login2 () {
-            Scanner scanner = new Scanner(System.in);
-            Scanner in = new Scanner(System.in);
-            Client found = null;
-            System.out.println("Which account do you want to login?");
-            System.out.println("1 - for a Client \n2 - for a Worker");
-            int clientOrWorker=in.nextInt();
-            System.out.println("Enter your username");
-            String username = scanner.nextLine();
-            System.out.println("Enter your password");
-            String password = scanner.nextLine();
-            for (Client currentUser : this.users) {
-                if (currentUser.getUserName().equals(username) && currentUser.getPassword().equals(password)) {
-                    found = currentUser;
-                    switch (clientOrWorker){
-                        case Deff.CLIENT:
-                            System.out.println(found.toString());
-                            showProducts();
-                            int userChoice;
-                            do {
-                                System.out.println("Which product do you want, If you want to complete the purchase, enter -1 ");
-                                userChoice = in.nextInt();
-                                int amountProduct;
-                                do {
-                                    System.out.println("How much products do you want?");
-                                    amountProduct = in.nextInt();
-                                } while (amountProduct <= 0 && amountProduct >= amountOfProduct(amountProduct));
-
-                            } while (doseProductExist(userChoice) || userChoice == -1);
-                            break;
-
-                        case Deff.WORKER:
-                            System.out.println(found.toString());
-
-                            break;
-                    }
-
-
-                } else {
-                    System.out.println("account not fount");
-                }
-            }
-
-
-
-
-
-            return found;
-        }
+            //the old login Function
+//    public Client login2 () {
+//            Scanner scanner = new Scanner(System.in);
+//            Scanner in = new Scanner(System.in);
+//            Client found = null;
+//            System.out.println("Which account do you want to login?");
+//            System.out.println("1 - for a Client \n2 - for a Worker");
+//            int clientOrWorker=in.nextInt();
+//            System.out.println("Enter your username");
+//            String username = scanner.nextLine();
+//            System.out.println("Enter your password");
+//            String password = scanner.nextLine();
+//            for (Client currentUser : this.users) {
+//                if (currentUser.getUserName().equals(username) && currentUser.getPassword().equals(password)) {
+//                    found = currentUser;
+//                    switch (clientOrWorker){
+//                        case Deff.CLIENT:
+//                            System.out.println(found.toString());
+//                            showProducts();
+//                            int userChoice;
+//                            do {
+//                                System.out.println("Which product do you want, If you want to complete the purchase, enter -1 ");
+//                                userChoice = in.nextInt();
+//                                int amountProduct;
+//                                do {
+//                                    System.out.println("How much products do you want?");
+//                                    amountProduct = in.nextInt();
+//                                } while (amountProduct <= 0 && amountProduct >= amountOfProduct(amountProduct));
+//
+//                            } while (doseProductExist(userChoice) || userChoice == -1);
+//                            break;
+//
+//                        case Deff.WORKER:
+//                            System.out.println(found.toString());
+//
+//                            break;
+//                    }
+//
+//
+//                } else {
+//                    System.out.println("account not fount");
+//                }
+//            }
+//
+//
+//
+//
+//
+//            return found;
+//        }
 
 
     private void showProducts() {
@@ -295,14 +323,16 @@ public class Store {
         }
     }
 
-    private boolean doseProductExist(int productNumber) {
+    private Product doseProductExist(int productNumber) {
         boolean productExist = false;
+        Product productForUser = null;
         for (Product currentProduct : this.products) {
             if (currentProduct.getNumOfProduct() == productNumber) {
-                productExist = true;
+                productForUser = currentProduct;
                 break;
             }
         }
-        return productExist;
+        return productForUser;
     }
+
 }

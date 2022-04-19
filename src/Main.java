@@ -4,23 +4,23 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Store store = new Store();
         int userChoice;
-        do{
+        do {
             System.out.println("OPTIONS");
             System.out.println("1 - Sign up");
             System.out.println("2 - Sign in");
             System.out.println("3 - Exit");
-            userChoice=scanner.nextInt();
+            userChoice = scanner.nextInt();
             switch (userChoice) {
                 case Deff.SIGN_UP:
                     store.createUser();
-                break;
+                    break;
                 case Deff.SIGN_IN:
                     store.login();
                     break;
                 case Deff.EXIT:
                     break;
             }
-        } while (userChoice !=3);
+        } while (userChoice != Deff.EXIT);
 
     }
 }

@@ -7,6 +7,11 @@ public class Worker extends Client {
         this.property = property;
     }
 
+    public Worker(Client other, WorkerProperty property) {
+        super(other.getFirstName(), other.getLastName(), other.getUserName(), other.getPassword(), other.isMember(), other.isWorker());
+        this.property = property;
+    }
+
     public void setProperty(WorkerProperty property) {
         this.property = property;
     }

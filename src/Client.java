@@ -1,5 +1,5 @@
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client {
@@ -10,7 +10,9 @@ public class Client {
     private String password;
     private boolean isMember;
     private boolean isWorker;
-    private LinkedList<Product> shoppingCartLinkedLis;
+    private ArrayList<Purchase> purchases;
+//    private LinkedList<Product> shoppingCartLinkedLis;
+
 //    private String date;
 
 
@@ -21,10 +23,37 @@ public class Client {
         this.password = password;
         this.isMember = isMember;
         this.isWorker=isWorker;
+        this.purchases = new ArrayList<>();
     }
     public Client(){
 
     }
+
+    public void addProductToCart(String productName, double price) {
+        this.purchases.add(new Purchase(productName, price));
+    }
+
+    public void shoppingCartStatus() {
+        double payment = 0;
+        for (Purchase currentPurchase : this.purchases) {
+            double productCost = currentPurchase.getPrice();
+            payment += productCost;
+            System.out.println(currentPurchase.getProductName() + "-  $" + productCost);
+        }
+        System.out.println("PAYMENT:" + payment);
+    }
+
+
+    public void finalCostOfPurchases()  throws NullPointerException{
+        double payment = 0;
+        for (Purchase currentPurchase : this.purchases) {
+            double productCost = currentPurchase.getPrice();
+            payment += productCost;
+        }
+        System.out.println("The final cost of the purchase -  $" + payment);
+        throw new NullPointerException("there is no Products so we cant get the productPrice ");
+    }
+
 
 
     public String toString(){
