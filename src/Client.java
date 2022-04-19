@@ -1,4 +1,5 @@
 
+import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Client {
@@ -9,7 +10,7 @@ public class Client {
     private String password;
     private boolean isMember;
     private boolean isWorker;
-//    private LinkedList<ShoppingCart> shoppingCartLinkedLis;
+    private LinkedList<Product> shoppingCartLinkedLis;
 //    private String date;
 
 

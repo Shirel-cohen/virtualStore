@@ -4,7 +4,7 @@ public class Product {
     private String productName;
     private int amount;
     private double price;
-   private boolean isExist;
+    private boolean isExist;
 
     public Product(int amount, double price, boolean isExist,int numOfProduct, String productName) {
         this.amount = amount;
