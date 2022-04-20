@@ -1,5 +1,5 @@
 
-public class Worker extends Client {
+public class Worker extends Client implements Introduce {
     private WorkerProperty property;
 
     public Worker(String firstName, String lastName, String userName, String password, boolean isMember, boolean isWorker, WorkerProperty property) {
@@ -12,11 +12,21 @@ public class Worker extends Client {
         this.property = property;
     }
 
+
     public void setProperty(WorkerProperty property) {
         this.property = property;
     }
 
     public WorkerProperty getProperty() {
         return property;
+    }
+
+    /*public String toString() {
+        return getFirstName() + " " + getLastName() + '(' + property + ')';
+    }*/
+
+    @Override
+    public String introduce() {
+        return "Hello " + this.getFirstName() + " " + this.getLastName() + " [" + this.property + ']';
     }
 }

@@ -3,6 +3,8 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Store store = new Store();
+
+
         int userChoice;
         do {
             System.out.println("OPTIONS");

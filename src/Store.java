@@ -12,6 +12,17 @@ public class Store {
     public Store() {
         this.users = new LinkedList<>();
         this.products =new LinkedList<>();
+        //for test
+        users.add(new Worker("Wasim", "shhab", "was", "123456", true, true, WorkerProperty.RegularWorker));
+        Client seham = new Client("seham", "shhab", "se", "123456", false, false);
+        Client abrar = new Client("abrar", "shhab", "abraer", "123456", true, false);
+        users.add(seham);
+        users.add(abrar);
+        // add product to seham cart
+        seham.addProductToCart("soda", 3.5);
+        abrar.addProductToCart("coca- cola", 6);
+
+
     }
 
 
@@ -131,29 +142,50 @@ public class Store {
     public void login() {
         Scanner scanner = new Scanner(System.in);
         int clientOrWorkerAccount = loginToClientOrWorker();
-        Client currentClientLogin = doseAccountExist();
+        Client currentAccountLogin = doseAccountExist();
 
-        if (currentClientLogin != null) {
+        if (currentAccountLogin != null) {
             switch (clientOrWorkerAccount) {
                 case Deff.CLIENT:
-                    System.out.println(currentClientLogin.toString());
-                    buyingInProcess(currentClientLogin);
+                    System.out.println(currentAccountLogin.introduce());
+                    buyingInProcess(currentAccountLogin);
                     break;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
                 case Deff.WORKER:
+                    System.out.println(currentAccountLogin.introduce());
+                    int workerChoice = 5;
+                    boolean backToMainMenu = false;
+//                    do {
+                        workersMenu();
+//                        workerChoice = scanner.nextInt();
+
+                        switch (workerChoice) {
+                            case 1:
+                            case 2:
+                            case 3:
+                            case 4:
+                                printingSpecificClients(workerChoice);
+                                break;
+                            case 5:
+                                addProductToTheStore();
+                                for (Product currentProduct : products) {
+                                    System.out.println(currentProduct.toString());
+                                }
+                                break;
+                            case 6:
+
+
+                                break;
+                            case 7:
+                            case 8:
+                                backToMainMenu = true;
+                                break;
+                            default:
+                                System.out.println("invalid choice");
+                                break;
+                        }
+
+//                    } while (!backToMainMenu);
                     break;
 
             }
@@ -162,10 +194,138 @@ public class Store {
         } else {
             System.out.println("no such account!!\n\n\n");
         }
+    }
+
+    private void addProductToTheStore() {
+        Scanner scanner = new Scanner(System.in);
+        Scanner in = new Scanner(System.in);
+
+        System.out.println("\t fill Product Details");
+        System.out.println("Product Name:");
+        String productName = scanner.nextLine();
 
 
+        int productNumber = 0;
+        boolean allowBarcode;
+        do {
+            System.out.println("barcode/Product number (maximum - 2 Digits):");
+            productNumber = in.nextInt();
+            allowBarcode = 0 < productNumber && productNumber <= 99;
+            if (allowBarcode) {
+                if (doseBarcodeCanBeUsed(productNumber)) {
+                    allowBarcode = false;
+                    System.out.println("Choose a different barcode:");
+                }
+            } else {
+
+            }
+        } while (!allowBarcode);
 
 
+        System.out.println("quantity:");
+        int amount = -1;
+        boolean normalQuantity;
+        do {
+            amount = in.nextInt();
+            normalQuantity = amount > 0;
+            if (!normalQuantity)
+                System.out.println("amount cannot be negative! , enter a positive amount:");
+        } while (!normalQuantity);
+
+        System.out.println("Product price");
+        double productPrice = 0;
+        boolean normalPrice;
+        do {
+            productPrice = in.nextDouble();
+            normalPrice = productPrice > 0;
+            if (!normalPrice)
+                System.out.println("price cannot be negative! , enter a positive price:");
+        } while (!normalPrice);
+
+
+        System.out.println("Percentage discount that club members will receive (discount can be between 0 - 70)");
+        int discount = 0;
+        boolean normalDiscount;
+        do {
+            discount = in.nextInt();
+            normalDiscount = 0 <= discount && discount <= 70;
+            if (!normalDiscount)
+                System.out.println("Invalid discount!!\ndiscount can be between 0 & 70 ");
+
+        } while (!normalDiscount);
+        products.add(new Product(amount, productPrice, true, productNumber, productName));
+    }
+
+    private boolean doseBarcodeCanBeUsed(int barcodeToCheck) {
+        boolean barcodeTaken = false;
+        for (Product currentProduct : products) {
+            if (currentProduct.getNumOfProduct() == barcodeToCheck) {
+                barcodeTaken = true;
+                System.out.println(currentProduct.getProductName() + " have the same barcode !!");
+                break;
+            }
+        }
+        return barcodeTaken;
+    }
+    private  void printingSpecificClients(int specificCategory) {
+        switch (specificCategory) {
+            case 1:
+                System.out.println("\t\t[Clients]");
+                for (Client currentClient : users)
+                    System.out.println(currentClient.toString());
+                break;
+            case 2:
+                System.out.println("\t\t[Club members]");
+                for (Client currentClient : users)
+                    if (currentClient.isMember())
+                        System.out.println(currentClient.toString());
+                break;
+            case 3:
+                System.out.println("\t\t[Client have made purchases]");
+                boolean clientHaveMadePurchase = false;
+                for (Client currentClient : users) {
+                    if (currentClient.getPurchases().size() > 0) {
+                        clientHaveMadePurchase = true;
+                        System.out.println(currentClient.toString());
+                    }
+                }
+
+                if (!clientHaveMadePurchase) {
+                    System.out.println("no one have made purchase");
+
+                }
+                break;
+            case 4:
+                System.out.println("\t\t[Beloved Client <3]");
+                System.out.println(users.get(belovedClient()).toString());
+                break;
+        }
+    }
+
+    private int belovedClient() {
+        double extremelyHighAmount = 0;
+        int belovedClientIndex = 0;
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getFinalCostOfPurchases() > extremelyHighAmount) {
+                belovedClientIndex = i;
+                extremelyHighAmount = users.get(belovedClientIndex).getFinalCostOfPurchases();
+            }
+        }
+        return belovedClientIndex;
+    }
+
+    private void workersMenu() {
+        System.out.println("____________________________________________________________________");
+        System.out.println("\t\tactions:");
+        System.out.println("1 - show Clients\n" + "" +
+                "2 - show Club member Clients\n" + "" +
+                "3 - show Client have made at least one purchase\n" + "" +
+                "4 - show Client whose Purchases amount is the highest\n" + "" +
+                "5 - add Product to the Store\n" + "" +
+                "6 - update inventory status for a product\n" + "" +
+                "7 - property" + "\n" +
+                "8 - Exit");
+        System.out.println("____________________________________________________________________\n\n");
     }
 
     private void buyingInProcess(Client currentClientLogin) {
@@ -182,16 +342,21 @@ public class Store {
 //                    should know what is the product index, to take the name and the price and add it to the client cart
 //                    if we have amount in the stock
                     int quantityUserNeeds = 0;
+
+                    boolean normalQuantityOfProduct;
                     do {
                         System.out.println("Select quantity: ");
                         quantityUserNeeds = scanner.nextInt();
-                        if (quantityUserNeeds > amountOfProduct(quantityUserNeeds)) {
-                            System.out.println("The quantity you selected is not in stock!");
-                            System.out.println("Currently there are [" + amountOfProduct(quantityUserNeeds) + "] in stock of the product you have selected");
-                        }
-                        // here we know that we have enough amount so we will add the product and the price
-                        currentClientLogin.addProductToCart(userProduct.getProductName() , userProduct.getPrice());
-                    } while (quantityUserNeeds < 0 && quantityUserNeeds > amountOfProduct(quantityUserNeeds));
+                        normalQuantityOfProduct = 0 < quantityUserNeeds && quantityUserNeeds <= userProduct.getAmount();
+
+                        if (quantityUserNeeds > userProduct.getAmount()) {
+                            System.out.println("Currently there are [" + userProduct.getAmount() + "] in stock of the product you have selected");
+                        } else if (quantityUserNeeds < 0)
+                            System.out.println("!!invalid Quantity ");
+
+                    } while (!normalQuantityOfProduct);
+                    // here we know that we have enough amount so we will add the product and the price
+                    currentClientLogin.addProductToCart(userProduct.getProductName() , userProduct.getPrice());
                     // show the client his current shopping cart status, and the price he should pay until now.
                     currentClientLogin.shoppingCartStatus();
 
@@ -242,8 +407,6 @@ public class Store {
 
         return accountType;
     }
-
-
 
     private Client doseAccountExist() {
         Client clientLogin = null;
@@ -312,7 +475,6 @@ public class Store {
 //
 //            return found;
 //        }
-
 
     private void showProducts() {
         System.out.println("Products:");

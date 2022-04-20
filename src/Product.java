@@ -10,8 +10,19 @@ public class Product {
         this.amount = amount;
         this.price = price;
         this.isExist = isExist;
-        this.numOfProduct= numOfProduct;
-        this.productName=productName;
+        this.numOfProduct = numOfProduct;
+        this.productName = productName;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "numOfProduct=" + numOfProduct +
+                ", productName='" + productName + '\'' +
+                ", amount=" + amount +
+                ", price=" + price +
+                ", isExist=" + isExist +
+                '}';
     }
 
     public String getProductName() {

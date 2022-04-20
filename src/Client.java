@@ -2,7 +2,8 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Client {
+public class Client implements Introduce {
+
 
     private String firstName;
     private String lastName;
@@ -10,6 +11,7 @@ public class Client {
     private String password;
     private boolean isMember;
     private boolean isWorker;
+    private double finalCostOfPurchases;
     private ArrayList<Purchase> purchases;
 //    private LinkedList<Product> shoppingCartLinkedLis;
 
@@ -22,15 +24,50 @@ public class Client {
         this.userName = userName;
         this.password = password;
         this.isMember = isMember;
-        this.isWorker=isWorker;
+        this.isWorker = isWorker;
         this.purchases = new ArrayList<>();
     }
-    public Client(){
 
+    public Client() {
+
+    }
+
+    public String introduce() {
+        String introduce;
+        if (!isMember) {
+            introduce = "Hello " + firstName + " " + lastName;
+        }
+        introduce = "Hello " + firstName + " " + lastName + " [Vip]";
+        return introduce;
+    }
+
+    public String toString() {
+
+        if (isMember) {
+            return "**************************************\n" +
+                    "Client Details: " + firstName + " " + lastName + " | CLUB MEMBER | " +
+                    "Amount of purchases = " + purchases.size() + " | " +
+                    "Total cost of purchases = $" + finalCostOfPurchases + "\n";
+
+        }
+        return "**************************************\n" +
+                "Client Details: " + firstName + " " + lastName + " | " +
+                "Amount of purchases = " + purchases.size() + " | " +
+                "Total cost of purchases = $" + finalCostOfPurchases + "\n";
+
+    }
+
+    public ArrayList<Purchase> getPurchases() {
+        return purchases;
     }
 
     public void addProductToCart(String productName, double price) {
         this.purchases.add(new Purchase(productName, price));
+        this.finalCostOfPurchases += price;
+    }
+
+    public double getFinalCostOfPurchases() {
+        return finalCostOfPurchases;
     }
 
     public void shoppingCartStatus() {
@@ -44,39 +81,32 @@ public class Client {
     }
 
 
-    public void finalCostOfPurchases()  throws NullPointerException{
-        double payment = 0;
+    public void finalCostOfPurchases() throws NullPointerException {
+
         for (Purchase currentPurchase : this.purchases) {
             double productCost = currentPurchase.getPrice();
-            payment += productCost;
+            finalCostOfPurchases += productCost;
         }
-        System.out.println("The final cost of the purchase -  $" + payment);
-        throw new NullPointerException("there is no Products so we cant get the productPrice ");
+        System.out.println("The final cost of the purchase -  $" + finalCostOfPurchases);
+
+        throw new NullPointerException("there is no Products so we cant get the productPrice");
     }
 
 
-
-    public String toString(){
-        if(this.isMember){
-            return "Hello " + this.firstName + " " + this.lastName +"(vip)!";
-        }
-            return "Hello " + this.firstName + " " + this.lastName +"!";
-    }
-
-    public String nameIsValid (){
+    public String nameIsValid() {
         Scanner scanner = new Scanner(System.in);
-        String [] array = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+        String[] array = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
         boolean contains = false;
-        String nameToCheck =  null;
-        do{
+        String nameToCheck = null;
+        do {
             contains = false;
             System.out.println("> ");
             nameToCheck = scanner.nextLine();
-            for (int i=0; i< array.length;i++){
-                if (nameToCheck.contains(array[i])){
+            for (int i = 0; i < array.length; i++) {
+                if (nameToCheck.contains(array[i])) {
                     System.out.println("You need to enter name without numbers!");
-                    contains=true;
-                    nameToCheck =  null;
+                    contains = true;
+                    nameToCheck = null;
                     break;
                 }
             }
@@ -84,8 +114,6 @@ public class Client {
 
         return nameToCheck;
     }
-
-
 
 
     public String getFirstName() {
