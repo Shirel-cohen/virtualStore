@@ -14,8 +14,7 @@ public class Client implements Introduce {
     private double finalCostOfPurchases;
     private ArrayList<Purchase> purchases;
 //    private LinkedList<Product> shoppingCartLinkedLis;
-
-//    private String date;
+//    private String date; // תודה של על הערה
 
 
     public Client(String firstName, String lastName, String userName, String password, boolean isMember, boolean isWorker) {
@@ -32,12 +31,20 @@ public class Client implements Introduce {
 
     }
 
+    public void setFinalCostOfPurchases(double finalCostOfPurchases) {
+        this.finalCostOfPurchases = finalCostOfPurchases;
+    }
+
+    public void setPurchases(ArrayList<Purchase> purchases) {
+        this.purchases = purchases;
+    }
+
     public String introduce() {
         String introduce;
-        if (!isMember) {
-            introduce = "Hello " + firstName + " " + lastName;
-        }
-        introduce = "Hello " + firstName + " " + lastName + " [Vip]";
+        if (isMember) {
+            introduce = "Hello " + firstName + " " + lastName + " [Vip]";
+        }else
+        introduce = "Hello " + firstName + " " + lastName;
         return introduce;
     }
 
@@ -61,8 +68,8 @@ public class Client implements Introduce {
         return purchases;
     }
 
-    public void addProductToCart(String productName, double price) {
-        this.purchases.add(new Purchase(productName, price));
+    public void addProductToCart(String productName, double price , int amount) {
+        this.purchases.add(new Purchase(productName, price, amount));
         this.finalCostOfPurchases += price;
     }
 
@@ -73,24 +80,13 @@ public class Client implements Introduce {
     public void shoppingCartStatus() {
         double payment = 0;
         for (Purchase currentPurchase : this.purchases) {
-            double productCost = currentPurchase.getPrice();
-            payment += productCost;
-            System.out.println(currentPurchase.getProductName() + "-  $" + productCost);
+            payment += currentPurchase.getPrice() * currentPurchase.getAmountOfProduct() ;
+            System.out.println(currentPurchase.getProductName() + "-  $" + currentPurchase.getPrice());
         }
-        System.out.println("PAYMENT:" + payment);
+        this.finalCostOfPurchases = payment;
+        System.out.println("[PAYMENT: $" + finalCostOfPurchases+"]");
     }
 
-
-    public void finalCostOfPurchases() throws NullPointerException {
-
-        for (Purchase currentPurchase : this.purchases) {
-            double productCost = currentPurchase.getPrice();
-            finalCostOfPurchases += productCost;
-        }
-        System.out.println("The final cost of the purchase -  $" + finalCostOfPurchases);
-
-        throw new NullPointerException("there is no Products so we cant get the productPrice");
-    }
 
 
     public String nameIsValid() {

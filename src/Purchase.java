@@ -1,10 +1,16 @@
 public class Purchase {
     private String productName;
     private double price;
+    private int amountOfProduct;
 
-    public Purchase(String productName, double price) {
+    public Purchase(String productName, double price, int amountOfProduct) {
         this.productName = productName;
         this.price = price;
+        this.amountOfProduct = amountOfProduct;
+    }
+
+    public int getAmountOfProduct() {
+        return amountOfProduct;
     }
 
     public String getProductName() {
