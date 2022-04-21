@@ -1,24 +1,24 @@
 
 public class Worker extends Client implements Introduce {
-    private WorkerProperty property;
+    private WorkerDegree degree;
 
-    public Worker(String firstName, String lastName, String userName, String password, boolean isMember, boolean isWorker, WorkerProperty property) {
+    public Worker(String firstName, String lastName, String userName, String password, boolean isMember, boolean isWorker, WorkerDegree degree) {
         super(firstName, lastName, userName, password, isMember, isWorker);
-        this.property = property;
+        this.degree = degree;
     }
 
-    public Worker(Client other, WorkerProperty property) {
+    public Worker(Client other, WorkerDegree property) {
         super(other.getFirstName(), other.getLastName(), other.getUserName(), other.getPassword(), other.isMember(), other.isWorker());
-        this.property = property;
+        this.degree = property;
     }
 
 
-    public void setProperty(WorkerProperty property) {
-        this.property = property;
+    public void setDegree(WorkerDegree degree) {
+        this.degree = degree;
     }
 
-    public WorkerProperty getProperty() {
-        return property;
+    public WorkerDegree getDegree() {
+        return degree;
     }
 
     /*public String toString() {
@@ -27,6 +27,6 @@ public class Worker extends Client implements Introduce {
 
     @Override
     public String introduce() {
-        return "Hello " + this.getFirstName() + " " + this.getLastName() + " [" + this.property + ']';
+        return "Hello " + this.getFirstName() + " " + this.getLastName() + " [" + this.degree + ']';
     }
 }

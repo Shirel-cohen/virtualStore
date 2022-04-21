@@ -1,3 +1,3 @@
-public enum WorkerProperty {
+public enum WorkerDegree {
     None, RegularWorker, Management,MemberOfTheManagementTeam;
 }

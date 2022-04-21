@@ -1,4 +1,5 @@
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -13,8 +14,9 @@ public class Client implements Introduce {
     private boolean isWorker;
     private double finalCostOfPurchases;
     private ArrayList<Purchase> purchases;
-//    private LinkedList<Product> shoppingCartLinkedLis;
-//    private String date; // תודה של על הערה
+    private int sumOfPurchases;
+    private double totalCostOfAllPurchase;
+    private LocalDate dateOfLastPurchase;
 
 
     public Client(String firstName, String lastName, String userName, String password, boolean isMember, boolean isWorker) {
@@ -25,6 +27,9 @@ public class Client implements Introduce {
         this.isMember = isMember;
         this.isWorker = isWorker;
         this.purchases = new ArrayList<>();
+        this.sumOfPurchases = 0;
+        this.totalCostOfAllPurchase = 0;
+        this.dateOfLastPurchase = null;
     }
 
     public Client() {
@@ -54,18 +59,50 @@ public class Client implements Introduce {
             return "**************************************\n" +
                     "Client Details: " + firstName + " " + lastName + " | CLUB MEMBER | " +
                     "Amount of purchases = " + purchases.size() + " | " +
-                    "Total cost of purchases = $" + finalCostOfPurchases + "\n";
+                    "Total cost of purchases = $" + finalCostOfPurchases + "\n" +
+                    "-------------------------------------\n" +
+                    "The amount of purchases he has made so far = " + sumOfPurchases + "\n" +
+                    "Total cost of all purchases made so far = " + totalCostOfAllPurchase + "\n" +
+                    "Date of last purchase he made = " + dateOfLastPurchase ;
 
         }
         return "**************************************\n" +
                 "Client Details: " + firstName + " " + lastName + " | " +
                 "Amount of purchases = " + purchases.size() + " | " +
-                "Total cost of purchases = $" + finalCostOfPurchases + "\n";
+                "Total cost of purchases = $" + finalCostOfPurchases + "\n" +
+                "-------------------------------------\n" +
+                "The amount of purchases he has made so far = " + sumOfPurchases + "\n" +
+                "Total cost of all purchases made so far = " + totalCostOfAllPurchase + "\n" +
+                "Date of last purchase he made = " + dateOfLastPurchase ;
 
     }
 
     public ArrayList<Purchase> getPurchases() {
         return purchases;
+    }
+
+    public void setSumOfPurchases(int sumOfPurchases) {
+        this.sumOfPurchases = sumOfPurchases;
+    }
+
+    public void setTotalCostOfAllPurchase(double totalCostOfAllPurchase) {
+        this.totalCostOfAllPurchase = totalCostOfAllPurchase;
+    }
+
+    public void setDateOfLastPurchase(LocalDate dateOfLastPurchase) {
+        this.dateOfLastPurchase = dateOfLastPurchase;
+    }
+
+    public int getSumOfPurchases() {
+        return sumOfPurchases;
+    }
+
+    public double getTotalCostOfAllPurchase() {
+        return totalCostOfAllPurchase;
+    }
+
+    public LocalDate getDateOfLastPurchase() {
+        return dateOfLastPurchase;
     }
 
     public void addProductToCart(String productName, double price , int amount) {
@@ -110,7 +147,6 @@ public class Client implements Introduce {
 
         return nameToCheck;
     }
-
 
     public String getFirstName() {
         return firstName;

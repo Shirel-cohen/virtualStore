@@ -1,5 +1,4 @@
-
-
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -9,12 +8,11 @@ public class Store {
     private LinkedList<Client> users;
     private LinkedList<Product> products;
 
-
     public Store() {
         this.users = new LinkedList<>();
         this.products =new LinkedList<>();
         //for test
-        users.add(new Worker("Wasim", "shhab", "was", "123456", true, true, WorkerProperty.RegularWorker));
+        users.add(new Worker("Wasim", "shhab", "was", "123456", true, true, WorkerDegree.RegularWorker));
         Client seham = new Client("seham", "shhab", "se", "123456", false, false);
         Client abrar = new Client("abrar", "shhab", "abraer", "123456", true, false);
         users.add(seham);
@@ -26,8 +24,6 @@ public class Store {
 
 
     }
-
-
 
     public void createUser () {
         Scanner scanner = new Scanner(System.in);
@@ -51,29 +47,30 @@ public class Store {
             case Deff.WORKER:
                 Client newClientWorker =  createUserGeneral();
                 newClientWorker.setWorker(true);
-                int workerDegree;
-                WorkerProperty workerProperty = WorkerProperty.None;
+                int userWorkerDegree;
+                WorkerDegree workerDegree = WorkerDegree.None;
                 do{
                     System.out.println("What is your degree?");
                     System.out.println("1-regular worker \n2-management \n3-member of the management team");
-                    workerDegree = in.nextInt();
-                    switch (workerDegree){
+                    userWorkerDegree = in.nextInt();
+                    switch (userWorkerDegree){
                         case Deff.REGULAR_WORKER:
-                            workerProperty=WorkerProperty.RegularWorker;
+                            workerDegree=WorkerDegree.RegularWorker;
                             break;
                         case Deff.MANAGEMENT:
-                            workerProperty=WorkerProperty.Management;
+                            workerDegree=WorkerDegree.Management;
                             break;
                         case Deff.MEMBER_OF_MANAGEMENT_TEAM:
-                            workerProperty=WorkerProperty.MemberOfTheManagementTeam;
+                            workerDegree=WorkerDegree.MemberOfTheManagementTeam;
                             break;}
 
-                } while (workerDegree != Deff.REGULAR_WORKER && workerDegree != Deff.MANAGEMENT && workerDegree != Deff.MEMBER_OF_MANAGEMENT_TEAM);
-                Worker newWorker = new Worker(newClientWorker, workerProperty);
+                } while (userWorkerDegree != Deff.REGULAR_WORKER && userWorkerDegree != Deff.MANAGEMENT && userWorkerDegree != Deff.MEMBER_OF_MANAGEMENT_TEAM);
+                Worker newWorker = new Worker(newClientWorker, workerDegree);
 //                Worker newWorker = new Worker(newClientWorker.getFirstName(), newClientWorker.getLastName(), newClientWorker.getUserName(), newClientWorker.getPassword(), newClientWorker.isMember(),newClientWorker.isWorker() ,workerProperty);
                 this.users.add(newWorker);
         }
     }
+
     public Client createUserGeneral() {
         Scanner scanner = new Scanner(System.in);
         Client newClient = new Client();
@@ -83,20 +80,20 @@ public class Store {
         newClient.setLastName(newClient.nameIsValid());
         boolean usernameTaken = false;
         String username = null;
-            do {
-                System.out.println("Enter username:");
-                username = scanner.nextLine();
-                usernameTaken = this.doesUserNameExist(username);
-            } while (usernameTaken);
-            newClient.setUserName(username);
-            boolean strongPassword = false;
-            String password = null;
-            do {
-                System.out.println("Enter a strong password: ");
-                password = scanner.nextLine();
-                strongPassword = this.checkIfStrongPassword(password);
-            } while (!strongPassword);
-            newClient.setPassword(password);
+        do {
+            System.out.println("Enter username:");
+            username = scanner.nextLine();
+            usernameTaken = this.doesUserNameExist(username);
+        } while (usernameTaken);
+        newClient.setUserName(username);
+        boolean strongPassword = false;
+        String password = null;
+        do {
+            System.out.println("Enter a strong password: ");
+            password = scanner.nextLine();
+            strongPassword = this.checkIfStrongPassword(password);
+        } while (!strongPassword);
+        newClient.setPassword(password);
         System.out.println("Are you a member?");
         String answer = scanner.nextLine();
         boolean member = false;
@@ -105,29 +102,27 @@ public class Store {
             member = true;
         }
         newClient.setMember(member);
-            return newClient;
-        }
-
+        return newClient;
+    }
 
     private boolean doesUserNameExist (String usernameToCheck){
-            boolean exits = false;
-            for (Client currentUser : this.users) {
-                if (currentUser.getUserName().equals(usernameToCheck)) {
-                    exits = true;
-                    break;
-                }
+        boolean exits = false;
+        for (Client currentUser : this.users) {
+            if (currentUser.getUserName().equals(usernameToCheck)) {
+                exits = true;
+                break;
             }
-            return exits;
         }
+        return exits;
+    }
 
     private boolean checkIfStrongPassword (String password){
-            boolean strong = false;
-            if (password.length() >= 6) {
-                strong = true;
-            }
-            return strong;
+        boolean strong = false;
+        if (password.length() >= 6) {
+            strong = true;
         }
-
+        return strong;
+    }
 
     public void login() {
         Scanner scanner = new Scanner(System.in);
@@ -229,16 +224,33 @@ public class Store {
         }
     }
 
+    private boolean existName(String nameToCheck) {
+
+        boolean isExist = false;
+        for (Product currentProduct : this.products) {
+            if (currentProduct.getProductName().equals(nameToCheck)) {
+                isExist = true;
+                System.out.println("There is a product with that name, please enter again");
+            }
+        }
+        return isExist;
+    }
 
     private void addProductToTheStore() {
         Scanner scanner = new Scanner(System.in);
         Scanner in = new Scanner(System.in);
-
         System.out.println("\t fill Product Details");
-        System.out.println("Product Name:");
-        String productName = scanner.nextLine();
+        String productName;
+        boolean isExistName;
+       do{
+           System.out.println("Product Name:");
+           productName = scanner.nextLine();
+           isExistName = false;
 
-
+               if (existName(productName)){
+                   isExistName = true;
+               }
+       } while (isExistName);
         int productNumber = 0;
         boolean allowBarcode;
         do {
@@ -252,9 +264,6 @@ public class Store {
                 }
             }
         } while (!allowBarcode);
-
-
-
         System.out.println("Product price");
         double productPrice = 0;
         boolean normalPrice;
@@ -264,8 +273,6 @@ public class Store {
             if (!normalPrice)
                 System.out.println("price cannot be negative! , enter a positive price:");
         } while (!normalPrice);
-
-
         System.out.println("Percentage discount that club members will receive (discount can be between 0 - 70)");
         int discount = 0;
         boolean normalDiscount;
@@ -291,6 +298,7 @@ public class Store {
         }
         return barcodeTaken;
     }
+
     private  void printingSpecificClients(int specificCategory) {
         switch (specificCategory) {
             case Deff.PRINT_COSTUMERS:
@@ -392,33 +400,22 @@ public class Store {
                     }
                     // show the client his current shopping cart status, and the price he should pay until now.
                     currentClientLogin.shoppingCartStatus();
-
-
                     // after each purchase maybe**   the shopping cart should be reset for the next shopping
-
-
-
                 } else {
-                    // for shirel if you wanna try to imagine that we have products our store just put this else and his
-
-
-                    //invalid productNumber
                     System.out.println("no such product");
                 }
             } else {
                 //purchase completed. nice to meet u
                 System.out.println("The final cost of the purchase -  $"+ currentClientLogin.getFinalCostOfPurchases());
                 System.out.println("purchase Completed.....................bye bye :)");
+                currentClientLogin.setSumOfPurchases(currentClientLogin.getSumOfPurchases()+1);
+                currentClientLogin.setTotalCostOfAllPurchase(currentClientLogin.getTotalCostOfAllPurchase()+currentClientLogin.getFinalCostOfPurchases());
+                currentClientLogin.setDateOfLastPurchase(LocalDate.now());
                 currentClientLogin.setPurchases(new ArrayList<>());
                 currentClientLogin.setFinalCostOfPurchases(0);
             }
-
-
-
         }
-
     }
-
 
     private  int loginToClientOrWorker() {
         Scanner in = new Scanner(System.in);
@@ -451,8 +448,6 @@ public class Store {
         }
         return clientLogin;
     }
-
-
 
     private void showProductsInStock() {
         System.out.println("\t\tProducts:");
