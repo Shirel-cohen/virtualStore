@@ -13,20 +13,19 @@ public class Store {
         this.products =new LinkedList<>();
         //for test
         users.add(new Worker("Wasim", "shhab", "was", "123456", true, true, WorkerDegree.RegularWorker));
+        users.add(new Worker("Wasim", "shhab", "wa", "123456", false, true, WorkerDegree.Management));
         Client seham = new Client("seham", "shhab", "se", "123456", false, false);
-        Client abrar = new Client("abrar", "shhab", "abraer", "123456", true, false);
+        Client abrar = new Client("abrar", "shhab", "ab", "123456", true, false);
         users.add(seham);
         users.add(abrar);
-       /* // add product to seham cart
-        seham.addProductToCart("soda", 3.5);
-        abrar.addProductToCart("coca- cola", 6);*/
-        products.add(new Product(100, 5, true, 11, "xl"));
-
+        products.add(new Product("xl",100,2,50,11,true));
+        products.add(new Product("milke",3.5,100,0,22,true));
+        products.add(new Product("shoko",4,100,0,33,true));
+        products.add(new Product("blue",4.5,100,0,44,true));
 
     }
 
     public void createUser () {
-        Scanner scanner = new Scanner(System.in);
         Scanner in =new Scanner (System.in);
         System.out.println("What type of user you are?");
         int type;
@@ -78,8 +77,8 @@ public class Store {
         newClient.setFirstName(newClient.nameIsValid());
         System.out.println("Enter your lastName");
         newClient.setLastName(newClient.nameIsValid());
-        boolean usernameTaken = false;
-        String username = null;
+        boolean usernameTaken;
+        String username;
         do {
             System.out.println("Enter username:");
             username = scanner.nextLine();
@@ -96,12 +95,7 @@ public class Store {
         newClient.setPassword(password);
         System.out.println("Are you a member?");
         String answer = scanner.nextLine();
-        boolean member = false;
-
-        if (answer.toLowerCase().equals("yes")) {
-            member = true;
-        }
-        newClient.setMember(member);
+        newClient.setMember(answer.toLowerCase().equals("yes"));
         return newClient;
     }
 
@@ -117,11 +111,7 @@ public class Store {
     }
 
     private boolean checkIfStrongPassword (String password){
-        boolean strong = false;
-        if (password.length() >= 6) {
-            strong = true;
-        }
-        return strong;
+        return password.length() >= 6;
     }
 
     public void login() {
@@ -138,11 +128,10 @@ public class Store {
 
                 case Deff.WORKER:
                     System.out.println(currentAccountLogin.introduce());
-                    int workerChoice = 6;
                     boolean backToMainMenu = false;
                     do {
                         workersMenu();
-                        workerChoice = scanner.nextInt();
+                        int workerChoice = scanner.nextInt();
 
                         switch (workerChoice) {
                             case Deff.PRINT_COSTUMERS:
@@ -162,6 +151,7 @@ public class Store {
                                 break;
 
                             case Deff.MAKE_PURCHASE:
+                                buyingInProcess(currentAccountLogin);
                             case Deff.LOG_OUT:
                                 backToMainMenu = true;
                                 break;
@@ -202,13 +192,15 @@ public class Store {
                         quantityToUpdate = in.nextInt();
                         normalAmount = quantityToUpdate >= 0;
                     }
-                    if (quantityToUpdate == 0) {
-                        productToUpdate.setAmount(quantityToUpdate);
-                        productToUpdate.setExist(false);
-                    } else {
-                        productToUpdate.setAmount(quantityToUpdate);
-                        productToUpdate.setExist(true);
-                    }
+                    productToUpdate.setAmountOfProduct(quantityToUpdate);  //it's the same logic of the if-else in line 204
+                    productToUpdate.setExist(quantityToUpdate > 0);
+//                    if (quantityToUpdate == 0) {
+//                        productToUpdate.setAmount(quantityToUpdate);
+//                        productToUpdate.setExist(false);
+//                    } else {
+//                        productToUpdate.setAmount(quantityToUpdate);
+//                        productToUpdate.setExist(true);
+//                    }
                 } else {
                     System.out.println("no such product");
                 }
@@ -224,33 +216,34 @@ public class Store {
         }
     }
 
-    private boolean existName(String nameToCheck) {
+    private Product productNameExist(String nameToCheck) {
+        Product product = null;
 
-        boolean isExist = false;
         for (Product currentProduct : this.products) {
             if (currentProduct.getProductName().equals(nameToCheck)) {
-                isExist = true;
-                System.out.println("There is a product with that name, please enter again");
+                System.out.println("There is a product with that name.");
+                product = currentProduct;
+                break;
             }
         }
-        return isExist;
+        return product;
     }
 
     private void addProductToTheStore() {
         Scanner scanner = new Scanner(System.in);
         Scanner in = new Scanner(System.in);
+        int updateORCreate = Deff.HUNDRED;
         System.out.println("\t fill Product Details");
-        String productName;
-        boolean isExistName;
-       do{
-           System.out.println("Product Name:");
-           productName = scanner.nextLine();
-           isExistName = false;
-
-               if (existName(productName)){
-                   isExistName = true;
-               }
-       } while (isExistName);
+        System.out.println("Product Name:");
+        String productName = scanner.nextLine();
+        Product productSelected = productNameExist(productName);
+        if (productSelected != null) {
+            updateORCreate = Deff.UPDATE;
+        }
+        if (updateORCreate == Deff.UPDATE) {
+            System.out.println("u can update it :\n\n\t[Product Status]");
+            System.out.println(productSelected.toString());
+        }
         int productNumber = 0;
         boolean allowBarcode;
         do {
@@ -282,15 +275,32 @@ public class Store {
             if (!normalDiscount)
                 System.out.println("Invalid discount!!\ndiscount can be between 0 & 70 ");
 
+
         } while (!normalDiscount);
+        int quantityToUpdate = 0;
+        if (productSelected != null) {
+            System.out.println("Amount:");
+            quantityToUpdate = in.nextInt();
+            boolean normalAmount = quantityToUpdate >= 0;
+            while (!normalAmount) {
+                System.out.println("invalid amount!\n amount should be positive");
+                quantityToUpdate = in.nextInt();
+                normalAmount = quantityToUpdate >= 0;
+            }
+            productSelected.setProductName(productName);
+            productSelected.setProductNumber(productNumber);
+            productSelected.setPrice(productPrice);
+            productSelected.setAmountOfProduct(quantityToUpdate);
+            productSelected.setExist(quantityToUpdate > 0);
+        } else
+            products.add(new Product(productName, productPrice, quantityToUpdate, discount, productNumber, false));
 //        we just added new product with no amount, so it's notExist in the stock Until some workers update this. in case 6
-        products.add(new Product(0, productPrice, false, productNumber, productName));
     }
 
     private boolean doseBarcodeCanBeUsed(int barcodeToCheck) {
         boolean barcodeTaken = false;
         for (Product currentProduct : products) {
-            if (currentProduct.getNumOfProduct() == barcodeToCheck) {
+            if (currentProduct.getProductNumber() == barcodeToCheck) {
                 barcodeTaken = true;
                 System.out.println(currentProduct.getProductName() + " have the same barcode !!");
                 break;
@@ -318,7 +328,7 @@ public class Store {
                 System.out.println("\t\t[Client have made purchases]");
                 boolean clientHaveMadePurchase = false;
                 for (Client currentClient : users) {
-                    if (currentClient.getPurchases().size() > 0) {
+                    if (currentClient.getSumOfPurchases() > 0) {
                         clientHaveMadePurchase = true;
                         System.out.println(currentClient.toString());
                     }
@@ -330,21 +340,24 @@ public class Store {
 
             case Deff.PRINT_COSTUMER_WITH_HIGHEST_PURCHASE:
                 System.out.println("\t\t[Beloved Client <3]");
-                System.out.println(users.get(belovedClient()).toString());
+                if (belovedClientIndex()!= -1)
+                System.out.println(users.get(belovedClientIndex()).toString());
+                else
+                    System.out.println("There is no BelovedClient");
                 break;
         }
     }
 
-    private int belovedClient() {
+    private int belovedClientIndex() {
         double extremelyHighAmount = 0;
-        int belovedClientIndex = 0;
+        int belovedClientIndex = -1;
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getFinalCostOfPurchases() > extremelyHighAmount) {
+            if (users.get(i).getTotalCostOfAllPurchase() > extremelyHighAmount) {
                 belovedClientIndex = i;
-                extremelyHighAmount = users.get(belovedClientIndex).getFinalCostOfPurchases();
+                extremelyHighAmount = users.get(belovedClientIndex).getTotalCostOfAllPurchase();
             }
         }
-        return belovedClientIndex;
+        return belovedClientIndex ;
     }
 
     private void workersMenu() {
@@ -365,8 +378,8 @@ public class Store {
         Scanner scanner = new Scanner(System.in);
         boolean buyingInProcess = true;
         while (buyingInProcess) {
-            System.out.println("Enter product number you would buy\nIf you want to complete the purchase enter -1");
-            showProductsInStock();
+            System.out.println("Enter product number you would buy\n[-1] to complete the purchase");
+            showProductsInStockToTheClients();
             int selectedProductNumber = scanner.nextInt();
             buyingInProcess = selectedProductNumber != -1;
             if (buyingInProcess) {
@@ -380,23 +393,22 @@ public class Store {
                     do {
                         System.out.println("Select quantity: ");
                         quantityUserNeeds = scanner.nextInt();
-                        normalQuantityOfProduct = 0 < quantityUserNeeds && quantityUserNeeds <= userProduct.getAmount();
+                        normalQuantityOfProduct = 0 < quantityUserNeeds && quantityUserNeeds <= userProduct.getAmountOfProduct();
 
-                        if (quantityUserNeeds > userProduct.getAmount()) {
-                            System.out.println("Currently there are [" + userProduct.getAmount() + "] in stock of the product you have selected");
+                        if (quantityUserNeeds > userProduct.getAmountOfProduct()) {
+                            System.out.println("Currently there are [" + userProduct.getProductNumber() + "] in stock of the product you have selected");
                         } else if (quantityUserNeeds < 0)
                             System.out.println("!!invalid Quantity ");
 
                     } while (!normalQuantityOfProduct);
                     // here we know that we have enough amount so we will add the product and the price
 
-
-                    currentClientLogin.addProductToCart(userProduct.getProductName() , userProduct.getPrice() , quantityUserNeeds);
-                    if (userProduct.getAmount() - quantityUserNeeds == 0) {
+                    currentClientLogin.addProductToCart(userProduct.getProductName() , userProduct.getPrice() , quantityUserNeeds,  userProduct.getDiscount());
+                    if (userProduct.getAmountOfProduct() - quantityUserNeeds == 0) {
                         userProduct.setExist(false);
-                        userProduct.setAmount(0);
+                        userProduct.setAmountOfProduct(0);
                     } else {
-                        userProduct.setAmount(userProduct.getAmount() - quantityUserNeeds);
+                        userProduct.setAmountOfProduct(userProduct.getAmountOfProduct() - quantityUserNeeds);
                     }
                     // show the client his current shopping cart status, and the price he should pay until now.
                     currentClientLogin.shoppingCartStatus();
@@ -405,14 +417,19 @@ public class Store {
                     System.out.println("no such product");
                 }
             } else {
-                //purchase completed. nice to meet u
-                System.out.println("The final cost of the purchase -  $"+ currentClientLogin.getFinalCostOfPurchases());
-                System.out.println("purchase Completed.....................bye bye :)");
-                currentClientLogin.setSumOfPurchases(currentClientLogin.getSumOfPurchases()+1);
-                currentClientLogin.setTotalCostOfAllPurchase(currentClientLogin.getTotalCostOfAllPurchase()+currentClientLogin.getFinalCostOfPurchases());
-                currentClientLogin.setDateOfLastPurchase(LocalDate.now());
-                currentClientLogin.setPurchases(new ArrayList<>());
-                currentClientLogin.setFinalCostOfPurchases(0);
+                boolean AtLeastOneProductWasAddedToTheClientCart = currentClientLogin.getPurchases().size() > 0;
+                if (AtLeastOneProductWasAddedToTheClientCart) { // if the clint add at lest one thing to cart so add the sum of his purchase if he just leaves without buy do nothing
+                    System.out.println("The final cost of the purchase -  $" + currentClientLogin.getCurrentPropertyCost());
+                    System.out.println("purchase Completed.....................bye bye :)");
+                    currentClientLogin.setSumOfPurchases(currentClientLogin.getSumOfPurchases() + 1); // sum purchase
+                    currentClientLogin.setTotalCostOfAllPurchase(currentClientLogin.getTotalCostOfAllPurchase() + currentClientLogin.getCurrentPropertyCost()); // this is t
+                    currentClientLogin.setDateOfLastPurchase(LocalDate.now());
+                    currentClientLogin.setCurrentPropertyCost(0);
+                    currentClientLogin.setPurchases(new ArrayList<>());
+                } else {
+                    System.out.println("Soon there will be new products we hope you like them");
+                }
+
             }
         }
     }
@@ -449,20 +466,20 @@ public class Store {
         return clientLogin;
     }
 
-    private void showProductsInStock() {
+    private void showProductsInStockToTheClients() {
         System.out.println("\t\tProducts:");
         for (Product currentProduct : this.products){
             if (currentProduct.isExist()){
-                System.out.println("Product {Product number=" + currentProduct.getNumOfProduct() + ", Product Name=" + currentProduct.getProductName()+"}");
+                System.out.println("Product {Product number=" + currentProduct.getProductNumber() + ", Product Name=" + currentProduct.getProductName()+"}");
             }
         }
     }
 
     private Product doseProductExist(int productNumber) {
-        boolean productExist = false;
+//        boolean productExist = false;
         Product productForUser = null;
         for (Product currentProduct : this.products) {
-            if (currentProduct.getNumOfProduct() == productNumber) {
+            if (currentProduct.getProductNumber() == productNumber) {
                 productForUser = currentProduct;
                 break;
             }

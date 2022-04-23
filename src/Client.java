@@ -12,7 +12,7 @@ public class Client implements Introduce {
     private String password;
     private boolean isMember;
     private boolean isWorker;
-    private double finalCostOfPurchases;
+    private double currentPropertyCost;
     private ArrayList<Purchase> purchases;
     private int sumOfPurchases;
     private double totalCostOfAllPurchase;
@@ -27,21 +27,33 @@ public class Client implements Introduce {
         this.isMember = isMember;
         this.isWorker = isWorker;
         this.purchases = new ArrayList<>();
-        this.sumOfPurchases = 0;
-        this.totalCostOfAllPurchase = 0;
-        this.dateOfLastPurchase = null;
+
     }
 
     public Client() {
-
+        this.purchases = new ArrayList<>(); // for the client we create them in process they should have Porches cart
     }
 
-    public void setFinalCostOfPurchases(double finalCostOfPurchases) {
-        this.finalCostOfPurchases = finalCostOfPurchases;
-    }
+    public String nameIsValid() {
+        Scanner scanner = new Scanner(System.in);
+        String[] array = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+        boolean contains;
+        String nameToCheck;
+        do {
+            contains = false;
+            System.out.println("> ");
+            nameToCheck = scanner.nextLine();
+            for (String num : array) {
+                if (nameToCheck.contains(num)) {
+                    System.out.println("You need to enter name without numbers!");
+                    contains = true;
+                    nameToCheck = null;
+                    break;
+                }
+            }
+        } while (contains);
 
-    public void setPurchases(ArrayList<Purchase> purchases) {
-        this.purchases = purchases;
+        return nameToCheck;
     }
 
     public String introduce() {
@@ -57,24 +69,62 @@ public class Client implements Introduce {
 
         if (isMember) {
             return "**************************************\n" +
-                    "Client Details: " + firstName + " " + lastName + " | CLUB MEMBER | " +
-                    "Amount of purchases = " + purchases.size() + " | " +
-                    "Total cost of purchases = $" + finalCostOfPurchases + "\n" +
-                    "-------------------------------------\n" +
-                    "The amount of purchases he has made so far = " + sumOfPurchases + "\n" +
-                    "Total cost of all purchases made so far = " + totalCostOfAllPurchase + "\n" +
-                    "Date of last purchase he made = " + dateOfLastPurchase ;
-
+                    "Client Details: Name = " + firstName + " " + lastName + " | CLUB MEMBER | " +
+                    "Amount of purchases = " + sumOfPurchases + " | " +
+                    "Total cost of purchases = $" + totalCostOfAllPurchase + " | Last purchase date = " + dateOfLastPurchase;
         }
         return "**************************************\n" +
-                "Client Details: " + firstName + " " + lastName + " | " +
-                "Amount of purchases = " + purchases.size() + " | " +
-                "Total cost of purchases = $" + finalCostOfPurchases + "\n" +
-                "-------------------------------------\n" +
-                "The amount of purchases he has made so far = " + sumOfPurchases + "\n" +
-                "Total cost of all purchases made so far = " + totalCostOfAllPurchase + "\n" +
-                "Date of last purchase he made = " + dateOfLastPurchase ;
+                "Client Details: Name = " + firstName + " " + lastName + " | " +
+                "Amount of purchases = " + sumOfPurchases + " | " +
+                "Total cost of purchases = $" + totalCostOfAllPurchase + " | Last purchase date = " + dateOfLastPurchase;
 
+
+
+    }
+
+    public void shoppingCartStatus() {
+        System.out.println("\t\t{Currently shopping cart}:");
+        double payment = 0;
+        if (!isMember && !isWorker) {
+            // not member(false) && notWorker(false) == false
+            for (Purchase currentPurchase : this.purchases) {
+                payment += currentPurchase.getPrice() * currentPurchase.getAmountOfProduct();
+                System.out.println("\t\t\t" + currentPurchase.getAmountOfProduct() + "-" + currentPurchase.getProductName() + " Cost per unit: $" + currentPurchase.getPrice());
+            }
+        } else {
+            int discount;
+            double cost;
+            double saved;
+            for (Purchase currentPurchase : this.purchases) {
+                discount = currentPurchase.getDiscount();
+                cost = currentPurchase.getPrice();
+                saved = (cost / Deff.HUNDRED) * discount;
+                payment += (cost - saved) * currentPurchase.getAmountOfProduct();
+                System.out.println("\t\t\t" + currentPurchase.getAmountOfProduct() + "-" + currentPurchase.getProductName() + " Cost per unit: $" + currentPurchase.getPrice());
+            }
+
+
+
+
+        }
+        currentPropertyCost = payment;
+//        totalCostOfAllPurchase += currentPropertyCost; 426 in store Class here we Update the total cost of purchases
+        System.out.println("\t\t\t\t\t[PAYMENT: $" + (float)currentPropertyCost+"]\n________________________________________________________________________");
+    }
+
+
+
+    public void addProductToCart(String productName, double price , int amount , int discount) {
+        this.purchases.add(new Purchase(productName, price, amount, discount));
+//        this.finalCostOfPurchases += price; // that's why we have wrong final amount to pay when the client complete the purchase.
+    }
+
+    public void setTotalCostOfAllPurchase(double totalCostOfAllPurchase) {
+        this.totalCostOfAllPurchase = totalCostOfAllPurchase;
+    }
+
+    public void setCurrentPropertyCost(double currentPropertyCost) {
+        this.currentPropertyCost = currentPropertyCost;
     }
 
     public ArrayList<Purchase> getPurchases() {
@@ -83,10 +133,6 @@ public class Client implements Introduce {
 
     public void setSumOfPurchases(int sumOfPurchases) {
         this.sumOfPurchases = sumOfPurchases;
-    }
-
-    public void setTotalCostOfAllPurchase(double totalCostOfAllPurchase) {
-        this.totalCostOfAllPurchase = totalCostOfAllPurchase;
     }
 
     public void setDateOfLastPurchase(LocalDate dateOfLastPurchase) {
@@ -101,52 +147,17 @@ public class Client implements Introduce {
         return totalCostOfAllPurchase;
     }
 
-    public LocalDate getDateOfLastPurchase() {
-        return dateOfLastPurchase;
+
+
+    public double getCurrentPropertyCost() {
+        return currentPropertyCost;
     }
 
-    public void addProductToCart(String productName, double price , int amount) {
-        this.purchases.add(new Purchase(productName, price, amount));
-        this.finalCostOfPurchases += price;
-    }
-
-    public double getFinalCostOfPurchases() {
-        return finalCostOfPurchases;
-    }
-
-    public void shoppingCartStatus() {
-        double payment = 0;
-        for (Purchase currentPurchase : this.purchases) {
-            payment += currentPurchase.getPrice() * currentPurchase.getAmountOfProduct() ;
-            System.out.println(currentPurchase.getProductName() + "-  $" + currentPurchase.getPrice());
-        }
-        this.finalCostOfPurchases = payment;
-        System.out.println("[PAYMENT: $" + finalCostOfPurchases+"]");
+    public void setPurchases(ArrayList<Purchase> purchases) {
+        this.purchases = purchases;
     }
 
 
-
-    public String nameIsValid() {
-        Scanner scanner = new Scanner(System.in);
-        String[] array = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-        boolean contains = false;
-        String nameToCheck = null;
-        do {
-            contains = false;
-            System.out.println("> ");
-            nameToCheck = scanner.nextLine();
-            for (int i = 0; i < array.length; i++) {
-                if (nameToCheck.contains(array[i])) {
-                    System.out.println("You need to enter name without numbers!");
-                    contains = true;
-                    nameToCheck = null;
-                    break;
-                }
-            }
-        } while (contains);
-
-        return nameToCheck;
-    }
 
     public String getFirstName() {
         return firstName;

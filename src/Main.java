@@ -2,6 +2,21 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+//        double cost;
+//        int discount;
+//        int hundred = 100;
+//        do {
+//            System.out.println("cost:");
+//            cost = scanner.nextInt();
+//            System.out.println("discount");
+//            discount = scanner.nextInt();
+//            System.out.println(cost / hundred);
+//            double calc = cost / hundred;
+//            double result = calc * discount;
+//            System.out.println("Payment =: "+ (cost-result) +" You saved " + result + " because you are a Club Member" );
+//        } while (cost != -1);
+
+
         Store store = new Store();
         int userChoice;
         do {

@@ -2,11 +2,25 @@ public class Purchase {
     private String productName;
     private double price;
     private int amountOfProduct;
+    private int discount;
 
-    public Purchase(String productName, double price, int amountOfProduct) {
+    public Purchase(String productName, double price, int amountOfProduct , int discount) {
         this.productName = productName;
         this.price = price;
         this.amountOfProduct = amountOfProduct;
+        this.discount = discount;
+    }
+
+    public void setAmountOfProduct(int amountOfProduct) {
+        this.amountOfProduct = amountOfProduct;
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
     }
 
     public int getAmountOfProduct() {
@@ -27,5 +41,15 @@ public class Purchase {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "product Name='" + productName + '\'' +
+                ", price=" + price +
+                ", Amount=" + amountOfProduct +
+                ", Discount for product=" + discount +
+                '}';
     }
 }

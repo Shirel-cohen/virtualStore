@@ -1,5 +1,3 @@
-import sun.security.provider.PolicySpiFile;
-
 public class Deff {
     public static final int CLIENT = 1;
     public static final int WORKER = 2;
@@ -20,6 +18,13 @@ public class Deff {
     public static final int CHANGING_PRODUCT_STATUS = 6;
     public static final int MAKE_PURCHASE = 7;
     public static final int LOG_OUT = 8;
+
+    public static final int UPDATE = 1;
+    public static final int CREATE = 2;
+
+    public static final int HUNDRED = 100;
+
+
 
 
 

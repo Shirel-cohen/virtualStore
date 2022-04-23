@@ -1,33 +1,25 @@
-public class Product {
+public class Product extends Purchase{
 
-    private int numOfProduct;
-    private String productName;
-    private int amount;
-    private double price;
+
+    private int ProductNumber;
     private boolean isExist;
 
-    public Product(int amount, double price, boolean isExist,int numOfProduct, String productName) {
-        this.amount = amount;
-        this.price = price;
+
+    public Product(String productName, double price, int amountOfProduct, int discount, int productNumber, boolean isExist) {
+        super(productName, price, amountOfProduct, discount);
+        ProductNumber = productNumber;
         this.isExist = isExist;
-        this.numOfProduct = numOfProduct;
-        this.productName = productName;
     }
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "numOfProduct=" + numOfProduct +
-                ", productName='" + productName + '\'' +
-                ", amount=" + amount +
-                ", price=" + price +
-                ", isExist=" + isExist +
-                '}';
+    public int getProductNumber() {
+        return ProductNumber;
     }
 
-    public String getProductName() {
-        return productName;
+    public void setProductNumber(int productNumber) {
+        ProductNumber = productNumber;
     }
+
+
 
     public boolean isExist() {
         return isExist;
@@ -37,29 +29,12 @@ public class Product {
         isExist = exist;
     }
 
-    public int getAmount() {
-        return amount;
+    @Override
+    public String toString() {
+
+        return  super.toString() +"\t\t{" +
+                "Product Number=" + ProductNumber +
+                ", Available in stock=" + isExist +
+                '}';
     }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public int getNumOfProduct() {
-        return numOfProduct;
-    }
-
-    public void setNumOfProduct(int numOfProduct) {
-        this.numOfProduct = numOfProduct;
-    }
-
-
 }
