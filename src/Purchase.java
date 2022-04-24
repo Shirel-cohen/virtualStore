@@ -19,9 +19,7 @@ public class Purchase {
         return discount;
     }
 
-    public void setDiscount(int discount) {
-        this.discount = discount;
-    }
+
 
     public int getAmountOfProduct() {
         return amountOfProduct;

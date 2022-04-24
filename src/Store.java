@@ -1,28 +1,18 @@
-import java.time.LocalDate;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Store {
 
-    private LinkedList<Client> users;
-    private LinkedList<Product> products;
+    private  LinkedList<Client> users;
+    private  LinkedList<Product> products;
 
     public Store() {
         this.users = new LinkedList<>();
         this.products =new LinkedList<>();
-        //for test
-        users.add(new Worker("Wasim", "shhab", "was", "123456", true, true, WorkerDegree.RegularWorker));
-        users.add(new Worker("Wasim", "shhab", "wa", "123456", false, true, WorkerDegree.Management));
-        Client seham = new Client("seham", "shhab", "se", "123456", false, false);
-        Client abrar = new Client("abrar", "shhab", "ab", "123456", true, false);
-        users.add(seham);
-        users.add(abrar);
-        products.add(new Product("xl",100,2,50,11,true));
-        products.add(new Product("milke",3.5,100,0,22,true));
-        products.add(new Product("shoko",4,100,0,33,true));
-        products.add(new Product("blue",4.5,100,0,44,true));
-
+        users.add(new Worker("wasim", "shhab", "was", "123456", true, true, WorkerDegree.Management));
     }
 
     public void createUser () {
@@ -30,7 +20,7 @@ public class Store {
         System.out.println("What type of user you are?");
         int type;
         do {
-            System.out.println("1 - for a Client \n2 - for a Worker");
+            System.out.println("1 - Client \n2 - Worker");
             type = in.nextInt();
         } while (type != Deff.CLIENT && type!=Deff.WORKER);
 
@@ -83,19 +73,23 @@ public class Store {
             System.out.println("Enter username:");
             username = scanner.nextLine();
             usernameTaken = this.doesUserNameExist(username);
+            if (usernameTaken)
+                System.out.println("username taken, choose different one");
         } while (usernameTaken);
         newClient.setUserName(username);
-        boolean strongPassword = false;
-        String password = null;
+        boolean strongPassword;
+        String password;
         do {
             System.out.println("Enter a strong password: ");
             password = scanner.nextLine();
             strongPassword = this.checkIfStrongPassword(password);
+            if (!strongPassword)
+                System.out.println("Password should be bigger than 5 characters");
         } while (!strongPassword);
         newClient.setPassword(password);
-        System.out.println("Are you a member?");
+        System.out.println("Are you a member?\t\t[YES/NO]");
         String answer = scanner.nextLine();
-        newClient.setMember(answer.toLowerCase().equals("yes"));
+        newClient.setMember(answer.equalsIgnoreCase("yes"));
         return newClient;
     }
 
@@ -152,6 +146,7 @@ public class Store {
 
                             case Deff.MAKE_PURCHASE:
                                 buyingInProcess(currentAccountLogin);
+                                break;
                             case Deff.LOG_OUT:
                                 backToMainMenu = true;
                                 break;
@@ -194,16 +189,7 @@ public class Store {
                     }
                     productToUpdate.setAmountOfProduct(quantityToUpdate);  //it's the same logic of the if-else in line 204
                     productToUpdate.setExist(quantityToUpdate > 0);
-//                    if (quantityToUpdate == 0) {
-//                        productToUpdate.setAmount(quantityToUpdate);
-//                        productToUpdate.setExist(false);
-//                    } else {
-//                        productToUpdate.setAmount(quantityToUpdate);
-//                        productToUpdate.setExist(true);
-//                    }
-                } else {
-                    System.out.println("no such product");
-                }
+                } else {System.out.println("no such product");}
             }
         } while (!finishUpdate);
 
@@ -230,71 +216,85 @@ public class Store {
     }
 
     private void addProductToTheStore() {
-        Scanner scanner = new Scanner(System.in);
-        Scanner in = new Scanner(System.in);
-        int updateORCreate = Deff.HUNDRED;
-        System.out.println("\t fill Product Details");
-        System.out.println("Product Name:");
-        String productName = scanner.nextLine();
-        Product productSelected = productNameExist(productName);
-        if (productSelected != null) {
-            updateORCreate = Deff.UPDATE;
-        }
-        if (updateORCreate == Deff.UPDATE) {
-            System.out.println("u can update it :\n\n\t[Product Status]");
-            System.out.println(productSelected.toString());
-        }
-        int productNumber = 0;
-        boolean allowBarcode;
+        boolean continueToUpdate = true;
+        boolean exit;
         do {
-            System.out.println("barcode/Product number (maximum - 2 Digits):");
-            productNumber = in.nextInt();
-            allowBarcode = 0 < productNumber && productNumber <= 99;
-            if (allowBarcode) {
-                if (doseBarcodeCanBeUsed(productNumber)) {
-                    allowBarcode = false;
-                    System.out.println("Choose a different barcode:");
+            Scanner scanner = new Scanner(System.in);
+            Scanner in = new Scanner(System.in);
+            int updateORCreate = Deff.CREATE;
+            System.out.println("\t fill Product Details\t\t[1]-Continue | [-1]-Exit");
+            exit = in.nextInt() == -1;
+            if (!exit) {
+                System.out.println("Product Name:");
+                String productName = scanner.nextLine();
+                Product productSelected = productNameExist(productName);
+                if (productSelected != null) {
+                    updateORCreate = Deff.UPDATE;
                 }
-            }
-        } while (!allowBarcode);
-        System.out.println("Product price");
-        double productPrice = 0;
-        boolean normalPrice;
-        do {
-            productPrice = in.nextDouble();
-            normalPrice = productPrice > 0;
-            if (!normalPrice)
-                System.out.println("price cannot be negative! , enter a positive price:");
-        } while (!normalPrice);
-        System.out.println("Percentage discount that club members will receive (discount can be between 0 - 70)");
-        int discount = 0;
-        boolean normalDiscount;
-        do {
-            discount = in.nextInt();
-            normalDiscount = 0 <= discount && discount <= 70;
-            if (!normalDiscount)
-                System.out.println("Invalid discount!!\ndiscount can be between 0 & 70 ");
+                if (updateORCreate == Deff.UPDATE) {
+                    System.out.println("u can update it :\n\n\t[Product Status]\n" + productSelected + "\t\t[2]-update | [-2]-Do not update");
+                    continueToUpdate = in.nextInt() == 2;
+                }
+                if (continueToUpdate) {
+
+                    int productNumber;
+                    boolean allowBarcode;
+                    do {
+                        System.out.println("barcode/Product number (maximum - 2 Digits):");
+                        productNumber = in.nextInt();
+                        allowBarcode = 0 < productNumber && productNumber <= 99;
+                        if (allowBarcode) {
+                            if (doseBarcodeCanBeUsed(productNumber)) {
+                                allowBarcode = false;
+                                System.out.println("Choose a different barcode:");
+                            }
+                        }
+                    } while (!allowBarcode);
+                    System.out.println("Product price");
+                    double productPrice;
+                    boolean normalPrice;
+                    do {
+                        productPrice = in.nextDouble();
+                        normalPrice = productPrice > 0;
+                        if (!normalPrice)
+                            System.out.println("price cannot be negative! , enter a positive price:");
+                    } while (!normalPrice);
+                    System.out.println("Percentage discount that club members will receive (discount can be between 0 - 70)");
+                    int discount;
+                    boolean normalDiscount;
+                    do {
+                        discount = in.nextInt();
+                        normalDiscount = 0 <= discount && discount <= 70;
+                        if (!normalDiscount)
+                            System.out.println("Invalid discount!!\ndiscount can be between 0 & 70 ");
 
 
-        } while (!normalDiscount);
-        int quantityToUpdate = 0;
-        if (productSelected != null) {
-            System.out.println("Amount:");
-            quantityToUpdate = in.nextInt();
-            boolean normalAmount = quantityToUpdate >= 0;
-            while (!normalAmount) {
-                System.out.println("invalid amount!\n amount should be positive");
-                quantityToUpdate = in.nextInt();
-                normalAmount = quantityToUpdate >= 0;
-            }
-            productSelected.setProductName(productName);
-            productSelected.setProductNumber(productNumber);
-            productSelected.setPrice(productPrice);
-            productSelected.setAmountOfProduct(quantityToUpdate);
-            productSelected.setExist(quantityToUpdate > 0);
-        } else
-            products.add(new Product(productName, productPrice, quantityToUpdate, discount, productNumber, false));
+                    } while (!normalDiscount);
+                    int quantityToUpdate = 0;
+                    if (productSelected != null) {
+                        System.out.println("Amount:");
+                        quantityToUpdate = in.nextInt();
+                        boolean normalAmount = quantityToUpdate >= 0;
+                        while (!normalAmount) {
+                            System.out.println("invalid amount!\n amount should be positive");
+                            quantityToUpdate = in.nextInt();
+                            normalAmount = quantityToUpdate >= 0;
+                        }
+                        productSelected.setProductName(productName);
+                        productSelected.setProductNumber(productNumber);
+                        productSelected.setPrice(productPrice);
+                        productSelected.setAmountOfProduct(quantityToUpdate);
+                        productSelected.setExist(quantityToUpdate > 0);
+                    } else
+                        products.add(new Product(productName, productPrice, quantityToUpdate, discount, productNumber, false));
 //        we just added new product with no amount, so it's notExist in the stock Until some workers update this. in case 6
+                }
+                continueToUpdate = true;
+            }
+
+
+        } while (!exit);
+
     }
 
     private boolean doseBarcodeCanBeUsed(int barcodeToCheck) {
@@ -321,7 +321,7 @@ public class Store {
                 System.out.println("\t\t[Club members]");
                 for (Client currentClient : users)
                     if (currentClient.isMember())
-                        System.out.println(currentClient.toString());
+                        System.out.println(currentClient);
                 break;
 
             case Deff.PRINT_COSTUMERS_WHO_MADE_PURCHASE:
@@ -330,7 +330,7 @@ public class Store {
                 for (Client currentClient : users) {
                     if (currentClient.getSumOfPurchases() > 0) {
                         clientHaveMadePurchase = true;
-                        System.out.println(currentClient.toString());
+                        System.out.println(currentClient);
                     }
                 }
 
@@ -378,17 +378,16 @@ public class Store {
         Scanner scanner = new Scanner(System.in);
         boolean buyingInProcess = true;
         while (buyingInProcess) {
-            System.out.println("Enter product number you would buy\n[-1] to complete the purchase");
+            System.out.println("Enter product number you would buy\t\t[-1] to complete the purchase");
             showProductsInStockToTheClients();
             int selectedProductNumber = scanner.nextInt();
             buyingInProcess = selectedProductNumber != -1;
             if (buyingInProcess) {
                 Product userProduct = doseProductExist(selectedProductNumber);
-                if (userProduct!=null) {
+                if (userProduct!=null && userProduct.isExist()) {
 //                    should know what is the product index, to take the name and the price and add it to the client cart
-//                    if we have amount in the stock
-                    int quantityUserNeeds = 0;
-
+//                    if amounted in the stock
+                    int quantityUserNeeds;
                     boolean normalQuantityOfProduct;
                     do {
                         System.out.println("Select quantity: ");
@@ -396,12 +395,12 @@ public class Store {
                         normalQuantityOfProduct = 0 < quantityUserNeeds && quantityUserNeeds <= userProduct.getAmountOfProduct();
 
                         if (quantityUserNeeds > userProduct.getAmountOfProduct()) {
-                            System.out.println("Currently there are [" + userProduct.getProductNumber() + "] in stock of the product you have selected");
+                            System.out.println("Currently there are [" + userProduct.getAmountOfProduct() + "] in stock of the product you have selected");
                         } else if (quantityUserNeeds < 0)
                             System.out.println("!!invalid Quantity ");
 
                     } while (!normalQuantityOfProduct);
-                    // here we know that we have enough amount so we will add the product and the price
+                    // here we know that we have enough amount, so we will add the product and the price
 
                     currentClientLogin.addProductToCart(userProduct.getProductName() , userProduct.getPrice() , quantityUserNeeds,  userProduct.getDiscount());
                     if (userProduct.getAmountOfProduct() - quantityUserNeeds == 0) {
@@ -414,6 +413,10 @@ public class Store {
                     currentClientLogin.shoppingCartStatus();
                     // after each purchase maybe**   the shopping cart should be reset for the next shopping
                 } else {
+                    if (userProduct != null) {
+                        System.out.println("this product Number for " + userProduct.getProductName() + " and we We provide it, at the moment it's Out of stock");
+
+                    }else
                     System.out.println("no such product");
                 }
             } else {
@@ -423,11 +426,11 @@ public class Store {
                     System.out.println("purchase Completed.....................bye bye :)");
                     currentClientLogin.setSumOfPurchases(currentClientLogin.getSumOfPurchases() + 1); // sum purchase
                     currentClientLogin.setTotalCostOfAllPurchase(currentClientLogin.getTotalCostOfAllPurchase() + currentClientLogin.getCurrentPropertyCost()); // this is t
-                    currentClientLogin.setDateOfLastPurchase(LocalDate.now());
+                    currentClientLogin.setDateOfLastPurchase(new SimpleDateFormat("yyyy/MM/dd   HH:mm:ss").format(new Date()));
                     currentClientLogin.setCurrentPropertyCost(0);
                     currentClientLogin.setPurchases(new ArrayList<>());
                 } else {
-                    System.out.println("Soon there will be new products we hope you like them");
+                    System.out.println("Soon there will be new products we hope you join us again");
                 }
 
             }

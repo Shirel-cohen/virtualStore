@@ -2,16 +2,15 @@
 public class Worker extends Client  {
     private WorkerDegree degree;
 
-    public Worker(String firstName, String lastName, String userName, String password, boolean isMember, boolean isWorker, WorkerDegree degree) {
-        super(firstName, lastName, userName, password, isMember, isWorker);
-        this.degree = degree;
-    }
-
     public Worker(Client other, WorkerDegree property) {
         super(other.getFirstName(), other.getLastName(), other.getUserName(), other.getPassword(), other.isMember(), other.isWorker());
         this.degree = property;
     }
 
+    public Worker(String firstName, String lastName, String userName, String password, boolean isMember, boolean isWorker, WorkerDegree degree) {
+        super(firstName, lastName, userName, password, isMember, isWorker);
+        this.degree = degree;
+    }
 
     public void shoppingCartStatus() {
         int discount;
@@ -53,7 +52,6 @@ public class Worker extends Client  {
         }
         System.out.println("\t\t\t\t\t[PAYMENT: $" + (float)getCurrentPropertyCost()+"]\n________________________________________________________________________");
     }
-
 
     @Override
     public String introduce() {

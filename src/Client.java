@@ -1,5 +1,4 @@
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -16,7 +15,7 @@ public class Client implements Introduce {
     private ArrayList<Purchase> purchases;
     private int sumOfPurchases;
     private double totalCostOfAllPurchase;
-    private LocalDate dateOfLastPurchase;
+    private String dateOfLastPurchase;
 
 
     public Client(String firstName, String lastName, String userName, String password, boolean isMember, boolean isWorker) {
@@ -27,11 +26,14 @@ public class Client implements Introduce {
         this.isMember = isMember;
         this.isWorker = isWorker;
         this.purchases = new ArrayList<>();
+        this.dateOfLastPurchase = "-";
+
 
     }
 
     public Client() {
         this.purchases = new ArrayList<>(); // for the client we create them in process they should have Porches cart
+        this.dateOfLastPurchase = "-";
     }
 
     public String nameIsValid() {
@@ -66,12 +68,11 @@ public class Client implements Introduce {
     }
 
     public String toString() {
-
         if (isMember) {
             return "**************************************\n" +
                     "Client Details: Name = " + firstName + " " + lastName + " | CLUB MEMBER | " +
                     "Amount of purchases = " + sumOfPurchases + " | " +
-                    "Total cost of purchases = $" + totalCostOfAllPurchase + " | Last purchase date = " + dateOfLastPurchase;
+                    "Total cost of purchases = $" + totalCostOfAllPurchase + " | Last purchase date = " +dateOfLastPurchase ;
         }
         return "**************************************\n" +
                 "Client Details: Name = " + firstName + " " + lastName + " | " +
@@ -115,9 +116,20 @@ public class Client implements Introduce {
 
 
     public void addProductToCart(String productName, double price , int amount , int discount) {
+        boolean productAlreadyExist = false;
+        for (Purchase purchase : purchases) {
+            String currentProductName = purchase.getProductName();
+            if (currentProductName.equals(productName)) {
+                purchase.setAmountOfProduct(purchase.getAmountOfProduct() + amount);
+                productAlreadyExist = true;
+                break;
+            }
+        }
+        if (!productAlreadyExist)
         this.purchases.add(new Purchase(productName, price, amount, discount));
-//        this.finalCostOfPurchases += price; // that's why we have wrong final amount to pay when the client complete the purchase.
     }
+
+
 
     public void setTotalCostOfAllPurchase(double totalCostOfAllPurchase) {
         this.totalCostOfAllPurchase = totalCostOfAllPurchase;
@@ -135,9 +147,10 @@ public class Client implements Introduce {
         this.sumOfPurchases = sumOfPurchases;
     }
 
-    public void setDateOfLastPurchase(LocalDate dateOfLastPurchase) {
+    public void setDateOfLastPurchase(String dateOfLastPurchase) {
         this.dateOfLastPurchase = dateOfLastPurchase;
     }
+
 
     public int getSumOfPurchases() {
         return sumOfPurchases;
