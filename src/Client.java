@@ -38,16 +38,15 @@ public class Client implements Introduce {
 
     public String nameIsValid() {
         Scanner scanner = new Scanner(System.in);
-        String[] array = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
         boolean contains;
         String nameToCheck;
         do {
             contains = false;
             System.out.println("> ");
             nameToCheck = scanner.nextLine();
-            for (String num : array) {
-                if (nameToCheck.contains(num)) {
-                    System.out.println("You need to enter name without numbers!");
+            for(int i=0; i<nameToCheck.length();i++){
+                if(Character.isDigit((nameToCheck.charAt(i)))){
+                                        System.out.println("You need to enter name without numbers!");
                     contains = true;
                     nameToCheck = null;
                     break;

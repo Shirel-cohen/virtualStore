@@ -12,7 +12,6 @@ public class Store {
     public Store() {
         this.users = new LinkedList<>();
         this.products =new LinkedList<>();
-        users.add(new Worker("wasim", "shhab", "was", "123456", true, true, WorkerDegree.Management));
     }
 
     public void createUser () {
@@ -55,7 +54,6 @@ public class Store {
 
                 } while (userWorkerDegree != Deff.REGULAR_WORKER && userWorkerDegree != Deff.MANAGEMENT && userWorkerDegree != Deff.MEMBER_OF_MANAGEMENT_TEAM);
                 Worker newWorker = new Worker(newClientWorker, workerDegree);
-//                Worker newWorker = new Worker(newClientWorker.getFirstName(), newClientWorker.getLastName(), newClientWorker.getUserName(), newClientWorker.getPassword(), newClientWorker.isMember(),newClientWorker.isWorker() ,workerProperty);
                 this.users.add(newWorker);
         }
     }
@@ -84,7 +82,7 @@ public class Store {
             password = scanner.nextLine();
             strongPassword = this.checkIfStrongPassword(password);
             if (!strongPassword)
-                System.out.println("Password should be bigger than 5 characters");
+                System.out.println("Password should be bigger than 6 characters");
         } while (!strongPassword);
         newClient.setPassword(password);
         System.out.println("Are you a member?\t\t[YES/NO]");
@@ -165,36 +163,45 @@ public class Store {
             System.out.println("no such account!!\n\n\n");
         }
     }
-    private void changeStatusOfProduct(){
+    private void changeStatusOfProduct() {
         Scanner in = new Scanner(System.in);
-        int quantityToUpdate,productNum;
+        int quantityToUpdate, productNum;
         boolean finishUpdate = false;
+        if (this.products.size() == 0) {
+                System.out.println("There is no product yet");
+        } else {
+            do {
+//            if (this.products.size()==0){
+//                System.out.println("There is no product yet");
+//            } else{
 
-        do {
-            showAllProducts();
-            System.out.println("Select product Number you want to update?\n[-1] to finish updates");
-            productNum = in.nextInt();
-            if (productNum == -1) {
-                finishUpdate = true;
-            } else {
-                Product productToUpdate = doseProductExist(productNum);
-                if (productToUpdate != null) {
-                    System.out.println("What quantity do you want to update for the product?");
-                    quantityToUpdate = in.nextInt();
-                    boolean normalAmount = quantityToUpdate >= 0;
-                    while (!normalAmount) {
-                        System.out.println("invalid amount!\n amount should be positive");
+                showAllProducts();
+                System.out.println("Select product Number you want to update?\n[-1] to finish updates");
+                productNum = in.nextInt();
+                if (productNum == -1) {
+                    finishUpdate = true;
+                } else {
+                    Product productToUpdate = doseProductExist(productNum);
+                    if (productToUpdate != null) {
+                        System.out.println("What quantity do you want to update for the product?");
                         quantityToUpdate = in.nextInt();
-                        normalAmount = quantityToUpdate >= 0;
+                        boolean normalAmount = quantityToUpdate >= 0;
+                        while (!normalAmount) {
+                            System.out.println("invalid amount!\n amount should be positive");
+                            quantityToUpdate = in.nextInt();
+                            normalAmount = quantityToUpdate >= 0;
+                        }
+                        productToUpdate.setAmountOfProduct(quantityToUpdate);  //it's the same logic of the if-else in line 204
+                        productToUpdate.setExist(quantityToUpdate > 0);
+
+                    } else {
+                        System.out.println("no such product");
                     }
-                    productToUpdate.setAmountOfProduct(quantityToUpdate);  //it's the same logic of the if-else in line 204
-                    productToUpdate.setExist(quantityToUpdate > 0);
-                } else {System.out.println("no such product");}
-            }
-        } while (!finishUpdate);
+                }
+            } while (!finishUpdate);
 
+        }
     }
-
     private void showAllProducts() {
         System.out.println("Products:");
         for (Product currentProduct : this.products){
@@ -378,6 +385,10 @@ public class Store {
         Scanner scanner = new Scanner(System.in);
         boolean buyingInProcess = true;
         while (buyingInProcess) {
+            if (this.products.size()==0){
+                System.out.println("Welcome to our store! sorry but for now we don't have any products at stock");
+                buyingInProcess=false;
+            } else{
             System.out.println("Enter product number you would buy\t\t[-1] to complete the purchase");
             showProductsInStockToTheClients();
             int selectedProductNumber = scanner.nextInt();
@@ -433,7 +444,7 @@ public class Store {
                     System.out.println("Soon there will be new products we hope you join us again");
                 }
 
-            }
+            }  }
         }
     }
 
@@ -470,12 +481,14 @@ public class Store {
     }
 
     private void showProductsInStockToTheClients() {
+
         System.out.println("\t\tProducts:");
         for (Product currentProduct : this.products){
             if (currentProduct.isExist()){
                 System.out.println("Product {Product number=" + currentProduct.getProductNumber() + ", Product Name=" + currentProduct.getProductName()+"}");
             }
         }
+
     }
 
     private Product doseProductExist(int productNumber) {
